@@ -13,6 +13,7 @@ from PySide6.QtWidgets import (
 
 from mediahub.ui.accueil import AccueilPage
 from mediahub.ui.lecteur import LecteurPage
+from mediahub.ui.parametres import ParametresPage
 
 class MainWindow(QMainWindow):
     def __init__(self) -> None:
@@ -49,8 +50,8 @@ class MainWindow(QMainWindow):
 
         self.pages.addWidget(AccueilPage())
         self.pages.addWidget(LecteurPage())
-        self.pages.addWidget(QLabel("Téléchargements"))
         self.pages.addWidget(QLabel("Paramètres"))
+        self.pages.addWidget(ParametresPage())
 
         # connexion
         bouton_accueil.clicked.connect(lambda: self.pages.setCurrentIndex(0))
