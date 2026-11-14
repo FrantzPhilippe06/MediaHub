@@ -11,6 +11,9 @@ from PySide6.QtWidgets import (
     QMessageBox, QStackedWidget
 )
 
+from mediahub.ui.accueil import AccueilPage
+from mediahub.ui.lecteur import LecteurPage
+
 class MainWindow(QMainWindow):
     def __init__(self) -> None:
         super().__init__()
@@ -44,8 +47,8 @@ class MainWindow(QMainWindow):
         # disposition pour les pages
         self.pages =QStackedWidget()
 
-        self.pages.addWidget(QLabel("Bienvenue sur MediaHub"))
-        self.pages.addWidget(QLabel("Lecteur"))
+        self.pages.addWidget(AccueilPage())
+        self.pages.addWidget(LecteurPage())
         self.pages.addWidget(QLabel("Téléchargements"))
         self.pages.addWidget(QLabel("Paramètres"))
 
