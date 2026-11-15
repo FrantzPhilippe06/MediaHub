@@ -3,7 +3,6 @@ from PySide6.QtWidgets import (
     QVBoxLayout,
     QHBoxLayout,
     QLabel, QLineEdit,
-    QComboBox,
     QPushButton,
     QTableWidget, QTableWidgetItem, QHeaderView,
     QRadioButton
@@ -16,7 +15,6 @@ class TelechargementsPage(QWidget):
         self.creer_interface()
 
     def creer_interface(self) -> None:
-        """Construit les éléments de l'interface."""
 
         # Disposition principale
         disposition = QVBoxLayout(self)
@@ -31,42 +29,38 @@ class TelechargementsPage(QWidget):
         section_url.addWidget(QLabel("URL YouTube : "))
 
         self.champ_url = QLineEdit()
-        self.champ_url.setPlaceholderText(
-            "Coller une URL YouTube"
-        )
+        self.champ_url.setPlaceholderText("Coller une URL YouTube")
         section_url.addWidget(self.champ_url)
 
         disposition.addLayout(section_url)
 
         # Choix du type
         zone_type = QHBoxLayout()
-        zone_type.addWidget(QLabel("Type de média : "),2)
+        zone_type.addWidget(QLabel("Type de média : "), 2)
 
         self.t_video = QRadioButton("Vidéo")
         self.t_audio = QRadioButton("Audio")
 
         self.t_video.setChecked(True)
 
-        zone_type.addWidget(self.t_video,1)
-        zone_type.addWidget(self.t_audio,1)
+        zone_type.addWidget(self.t_video, 1)
+        zone_type.addWidget(self.t_audio, 1)
 
         disposition.addLayout(zone_type)
 
         # Nom du fichier
         zone_nom = QHBoxLayout()
-        zone_nom.addWidget(QLabel("Nom du fichier : "),2)
+        zone_nom.addWidget(QLabel("Nom du fichier : "), 2)
 
         self.champ_nom = QLineEdit()
-        self.champ_nom.setPlaceholderText(
-            "Nom du fichier"
-        )
+        self.champ_nom.setPlaceholderText( "Nom du fichier" )
 
-        zone_nom.addWidget(self.champ_nom,7)
+        zone_nom.addWidget(self.champ_nom, 7)
 
         # Bouton Ajouter
         self.bouton_ajouter = QPushButton("Ajouter")
 
-        zone_nom.addWidget(self.bouton_ajouter,2)
+        zone_nom.addWidget(self.bouton_ajouter, 2)
 
         disposition.addLayout(zone_nom)
 
@@ -91,3 +85,41 @@ class TelechargementsPage(QWidget):
         disposition.addWidget(self.tableau)
 
         # Connexion
+        self.bouton_ajouter.clicked.connect(self.ajouter_telechargement)
+
+    def ajouter_telechargement(self) -> None:
+
+        # Ajoute une entrée fictive à la liste.
+        url = self.champ_url.text().strip()
+        nom = self.champ_nom.text().strip()
+        type_media = "Video"  if self.t_video.isChecked() else "Audio"
+
+        if not url or not nom:
+            return
+
+        # Déterminer l'extension
+        extension = "mp4" if type_media == "Video" else "mp3"
+
+        nom_fichier = f"{nom}.{extension}"
+
+        valeurs = [
+            nom_fichier,
+            type_media,
+            "0.0",
+            "En attente"
+        ]
+
+        # Ajouter une ligne
+        ligne = self.tableau.rowCount()
+        self.tableau.insertRow(ligne)
+
+        for colonne, valeur in enumerate(valeurs):
+            self.tableau.setItem(
+                ligne,
+                colonne,
+                QTableWidgetItem(valeur)
+            )
+
+        # Vider les champs après l'ajout
+        self.champ_url.clear()
+        self.champ_nom.clear()
