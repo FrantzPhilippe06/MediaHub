@@ -8,7 +8,7 @@ from PySide6.QtWidgets import (
     QHBoxLayout,
     QSlider, QPushButton,
 )
-
+from pathlib import Path
 
 class LecteurPage(QWidget):
     def __init__(self) -> None:
@@ -86,7 +86,9 @@ class LecteurPage(QWidget):
 
         disposition.addLayout(controles)
 
+    def selectionner_media(self, chemin: Path) -> None:
 
+        self.section_affichage.setText(chemin.name)
 
 
 

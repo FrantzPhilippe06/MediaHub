@@ -15,6 +15,7 @@ from mediahub.ui.accueil import AccueilPage
 from mediahub.ui.lecteur import LecteurPage
 from mediahub.ui.parametres import ParametresPage
 from mediahub.ui.telechargements import TelechargementsPage
+from pathlib import Path
 
 class MainWindow(QMainWindow):
     def __init__(self) -> None:
@@ -48,9 +49,12 @@ class MainWindow(QMainWindow):
 
         # disposition pour les pages
         self.pages =QStackedWidget()
+        # Création des objets
+        self.accueil = AccueilPage()
+        self.lecteur = LecteurPage()
 
-        self.pages.addWidget(AccueilPage())
-        self.pages.addWidget(LecteurPage())
+        self.pages.addWidget(self.accueil)
+        self.pages.addWidget(self.lecteur)
         self.pages.addWidget(TelechargementsPage())
         self.pages.addWidget(ParametresPage())
 
@@ -59,7 +63,15 @@ class MainWindow(QMainWindow):
         bouton_lecteur.clicked.connect(lambda: self.pages.setCurrentIndex(1))
         bouton_telechargements.clicked.connect(lambda: self.pages.setCurrentIndex(2))
         bouton_params.clicked.connect(lambda: self.pages.setCurrentIndex(3))
+        self.accueil.media_selectionne.connect(
+            self.ouvrir_dans_lecteur
+        )
 
         # assemblage
         disposition.addLayout(menu,1)
         disposition.addWidget(self.pages, 4)
+
+    def ouvrir_dans_lecteur(self, chemin: Path) -> None:
+
+        self.lecteur.selectionner_media(chemin)
+        self.pages.setCurrentWidget(self.lecteur)

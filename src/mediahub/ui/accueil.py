@@ -1,4 +1,4 @@
-from PySide6.QtCore import Qt
+from PySide6.QtCore import (Qt, Signal)
 from PySide6.QtWidgets import (
     QWidget,
     QVBoxLayout,
@@ -12,9 +12,10 @@ from PySide6.QtWidgets import (
 from mediahub.service.parametre_service import ParametreService
 from mediahub.core.media import Media
 from datetime import datetime
+from pathlib import Path
 
 class AccueilPage(QWidget):
-
+    media_selectionne = Signal(Path)
     # Interface d'accueil
     def __init__(self) -> None:
         super().__init__()
@@ -59,13 +60,19 @@ class AccueilPage(QWidget):
             "nature.mp4", "Vidéo", "184 Mo", "2025-01-20 14:32"
         )
     """
+        #connexion
+        self.tableau.cellDoubleClicked.connect(self.ouvrir_media )
+
     def ajouter_fichier(
             self, nom: str, type: str,
-            taille: str, date: str) -> None:
+            taille: str, date: str , chemin: Path) -> None:
         ligne = self.tableau.rowCount()
         self.tableau.insertRow(ligne)
 
-        self.tableau.setItem(ligne, 0, QTableWidgetItem(nom))
+        colonne_nom = QTableWidgetItem(nom)
+        colonne_nom.setData(Qt.ItemDataRole.UserRole, chemin)
+
+        self.tableau.setItem(ligne, 0, colonne_nom)
         self.tableau.setItem(ligne, 1, QTableWidgetItem(type))
         self.tableau.setItem(ligne, 2, QTableWidgetItem(taille))
         self.tableau.setItem(ligne, 3, QTableWidgetItem(date))
@@ -87,7 +94,19 @@ class AccueilPage(QWidget):
                     media.nom,
                     media.type_media,
                     f"{media.taille} octets",
-                    date
+                    date,
+                    media.url
                 )
 
 
+    def ouvrir_media(self, ligne: int, colonne: int) -> None:
+
+        cellule = self.tableau.item(ligne, 0)
+
+        if cellule is None:
+            return
+
+        chemin = cellule.data(Qt.ItemDataRole.UserRole)
+
+        if isinstance(chemin, Path):
+            self.media_selectionne.emit(chemin)
