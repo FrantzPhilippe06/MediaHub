@@ -1,9 +1,9 @@
 from pathlib import Path
 class Media:
     def __init__(self, nom: str, url: Path, type_media: str, taille: str ) -> None:
-        self.nom = nom,
-        self.url = url,
-        self.type_media = type_media,
+        self.nom = nom
+        self.url = url
+        self.type_media = type_media
         self.taille = taille
 
     @classmethod
