@@ -1,5 +1,5 @@
 
-from PySide6.QtCore import Qt
+from PySide6.QtCore import Qt, QUrl
 from PySide6.QtWidgets import (
     QWidget,
     QVBoxLayout,
@@ -8,11 +8,16 @@ from PySide6.QtWidgets import (
     QHBoxLayout,
     QSlider, QPushButton,
 )
+from PySide6.QtMultimedia import QAudioOutput, QMediaPlayer
 from pathlib import Path
 
 class LecteurPage(QWidget):
     def __init__(self) -> None:
         super().__init__()
+        self.player = QMediaPlayer(self)
+        self.audio_output = QAudioOutput(self)
+        self.player.setAudioOutput(self.audio_output)
+
         self.creer_interface()
 
     def creer_interface(self) -> None:
@@ -36,14 +41,15 @@ class LecteurPage(QWidget):
 
         disposition.addWidget(self.section_affichage)
 
+        self.tire_media = QLabel("---------")
+        disposition.addWidget(self.tire_media)
+
         # zone de progression
 
         progression = QHBoxLayout()
 
         temps_actuel = QLabel("00:00")
-        slider = QSlider(
-            Qt.Orientation.Horizontal
-        )
+        slider = QSlider(Qt.Orientation.Horizontal)
         temps_Total = QLabel("00:00")
 
         progression.addWidget(temps_actuel)
@@ -86,12 +92,13 @@ class LecteurPage(QWidget):
 
         disposition.addLayout(controles)
 
+     #connexion
+        self.bouton_lecture.clicked.connect(self.player.play)
+        self.bouton_arreter.clicked.connect(self.player.pause)
+
     def selectionner_media(self, chemin: Path) -> None:
 
-        self.section_affichage.setText(chemin.name)
+        self.section_affichage.setText("")
+        self.tire_media.setText(chemin.name)
 
-
-
-
-
-
+        self.player.setSource(QUrl.fromLocalFile(str(chemin.resolve())))
