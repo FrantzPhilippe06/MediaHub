@@ -10,6 +10,7 @@ from PySide6.QtWidgets import (
 )
 from PySide6.QtMultimedia import QAudioOutput, QMediaPlayer
 from pathlib import Path
+from PySide6.QtMultimediaWidgets import QVideoWidget
 
 class LecteurPage(QWidget):
     def __init__(self) -> None:
@@ -19,6 +20,7 @@ class LecteurPage(QWidget):
         self.player.setAudioOutput(self.audio_output)
 
         self.creer_interface()
+        self.player.setVideoOutput(self.zone_video)
 
     def creer_interface(self) -> None:
         # disposition de la page
@@ -40,6 +42,12 @@ class LecteurPage(QWidget):
         )
 
         disposition.addWidget(self.section_affichage)
+
+        # Zone d'affichage de la vidéo
+        self.zone_video = QVideoWidget()
+
+        self.zone_video.setMinimumHeight(250)
+        disposition.addWidget(self.zone_video)
 
         self.tire_media = QLabel("---------")
         disposition.addWidget(self.tire_media)
