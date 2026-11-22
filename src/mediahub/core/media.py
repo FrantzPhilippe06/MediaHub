@@ -18,7 +18,7 @@ class Media:
 
         if extension in [".mp4", ".mkv", ".avi", ".mov", ".wmv",".webm", ".ogv"]:
             type_media = "video"
-        elif extension in [".mp3", ".wav", ".flac", ".ogg",".aac"]:
+        elif extension in [".mp3", ".wav", ".flac", ".ogg",".aac", ".m4a"]:
             type_media = "audio"
         else:
             raise ValueError(
