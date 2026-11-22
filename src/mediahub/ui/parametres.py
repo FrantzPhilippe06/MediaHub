@@ -1,4 +1,4 @@
-
+from mediahub.service.parametre_service import ParametreService
 from PySide6.QtWidgets import (
     QWidget,
     QVBoxLayout,
@@ -6,7 +6,9 @@ from PySide6.QtWidgets import (
     QLineEdit,
     QPushButton,
     QComboBox, QCheckBox, QFileDialog,
+    QMessageBox,
 )
+from pathlib import Path
 
 
 class ParametresPage(QWidget):
@@ -15,6 +17,7 @@ class ParametresPage(QWidget):
         super().__init__()
 
         self.creer_interface()
+        self.configuration_service = ParametreService()
 
     def creer_interface(self) -> None:
         # l'interface des paramètres.
@@ -31,9 +34,9 @@ class ParametresPage(QWidget):
         self.champ_dossier.setReadOnly(True)
         self.bouton_parcourir = QPushButton("Parcourir")
 
-        dossier_layout.addWidget(QLabel("Dossier de téléchargement"),2)
-        dossier_layout.addWidget(self.champ_dossier,7)
-        dossier_layout.addWidget(self.bouton_parcourir,1)
+        dossier_layout.addWidget(QLabel("Dossier de téléchargement"), 2)
+        dossier_layout.addWidget(self.champ_dossier, 7)
+        dossier_layout.addWidget(self.bouton_parcourir, 1)
 
         disposition.addLayout(dossier_layout)
 
@@ -48,8 +51,8 @@ class ParametresPage(QWidget):
             "480p",
             "360p"
         ])
-        qualité_layout.addWidget(QLabel("Qualité vidéo par défaut"),1)
-        qualité_layout.addWidget(self.choix_qualite,4)
+        qualité_layout.addWidget(QLabel("Qualité vidéo par défaut"), 1)
+        qualité_layout.addWidget(self.choix_qualite, 4)
 
         disposition.addLayout(qualité_layout)
 
@@ -57,14 +60,14 @@ class ParametresPage(QWidget):
 
         format_layout = QHBoxLayout()
 
-        format_layout.addWidget(QLabel("Format par défaut"),1)
+        format_layout.addWidget(QLabel("Format par défaut"), 1)
 
         self.choix_format = QComboBox()
         self.choix_format.addItems([
             "MP4",
             "MP3"
         ])
-        format_layout.addWidget(self.choix_format,4)
+        format_layout.addWidget(self.choix_format, 4)
         disposition.addLayout(format_layout)
 
         # Options
@@ -94,6 +97,7 @@ class ParametresPage(QWidget):
 
         # connexion
         self.bouton_parcourir.clicked.connect(self.choisir_dossier)
+        self.bouton_enregistrer.clicked.connect(self.enregistrer_parametres)
 
     def choisir_dossier(self) -> None:
         # Ouvre une boîte de dialogue pour choisir un dossier.
@@ -105,3 +109,25 @@ class ParametresPage(QWidget):
 
         if dossier:
             self.champ_dossier.setText(dossier)
+
+    def enregistrer_parametres(self) -> None:
+
+        chemin = self.champ_dossier.text().strip()
+
+        if not chemin:
+            QMessageBox.warning(
+                self,
+                "Attention",
+                "Veuillez sélectionner un dossier."
+            )
+            return
+
+        self.configuration_service.enregistrer_dossier(
+            Path(chemin)
+        )
+
+        QMessageBox.information(
+            self,
+            "Succès",
+            "Dossier de téléchargement enregistré."
+        )
