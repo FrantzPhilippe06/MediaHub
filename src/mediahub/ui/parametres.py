@@ -18,6 +18,7 @@ class ParametresPage(QWidget):
 
         self.creer_interface()
         self.configuration_service = ParametreService()
+        self.charger_parametre()
 
     def creer_interface(self) -> None:
         # l'interface des paramètres.
@@ -131,3 +132,7 @@ class ParametresPage(QWidget):
             "Succès",
             "Dossier de téléchargement enregistré."
         )
+    def charger_parametre(self) ->None :
+        dossier = self.configuration_service.obtenir_dossier()
+        if dossier is not None:
+            self.champ_dossier.setText(str(dossier))
