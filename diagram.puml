@@ -1,0 +1,78 @@
+@startuml
+skinparam classAttributeIconSize 0
+
+title Diagramme de classes - MediaHub
+
+package "core" {
+    class Media {
+        + nom: str
+        + url: Path
+        + type_media: str
+        + taille: str
+        --
+        + {static} depuis_fichier(chemin: Path): Media
+    }
+}
+
+package "service" {
+    class ParametreService {
+        + fichier_configuration: Path
+        --
+        + enregistrer_dossier(chemin: Path): None
+        + obtenir_dossier(): Path | None
+    }
+}
+
+package "ui" {
+    class MainWindow {
+        + accueil: AccueilPage
+        + lecteur: LecteurPage
+        + pages: QStackedWidget
+        --
+        + ouvrir_dans_lecteur(chemin: Path): None
+    }
+
+    class AccueilPage {
+        + media_selectionne: Signal
+        + tableau: QTableWidget
+        --
+        + creer_interface(): None
+        + charger_medias(): None
+        + ajouter_fichier(...): None
+        + ouvrir_media(ligne: int, colonne: int): None
+    }
+
+    class LecteurPage {
+        + player: QMediaPlayer
+        + audio_output: QAudioOutput
+        + zone_video: QVideoWidget
+        --
+        + creer_interface(): None
+        + selectionner_media(chemin: Path): None
+    }
+
+    class ParametresPage {
+        + champ_dossier: QLineEdit
+        --
+        + creer_interface(): None
+        + enregistrer_parametres(): None
+        + charger_parametres(): None
+    }
+
+    class TelechargementsPage {
+        + creer_interface(): None
+    }
+}
+
+MainWindow "1" *-- "1" AccueilPage
+MainWindow "1" *-- "1" LecteurPage
+MainWindow "1" *-- "1" ParametresPage
+MainWindow "1" *-- "1" TelechargementsPage
+
+AccueilPage ..> Media : crée
+AccueilPage ..> ParametreService : utilise
+ParametresPage --> ParametreService : utilise
+
+MainWindow ..> LecteurPage : transmet le média
+
+@enduml
